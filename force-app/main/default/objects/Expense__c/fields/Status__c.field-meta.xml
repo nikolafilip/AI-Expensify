@@ -32,6 +32,11 @@
                 <default>false</default>
                 <label>Rejected</label>
             </value>
+            <value>
+                <fullName>Failed</fullName>
+                <default>false</default>
+                <label>Failed</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

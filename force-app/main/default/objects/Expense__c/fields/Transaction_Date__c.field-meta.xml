@@ -4,7 +4,7 @@
     <description>The date when the expense transaction occurred. This field helps in tracking and reporting expenses over time.</description>
     <inlineHelpText>The date when the expense transaction occurred. This field helps in tracking and reporting expenses over time.</inlineHelpText>
     <label>Transaction Date</label>
-    <required>true</required>
+    <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Date</type>

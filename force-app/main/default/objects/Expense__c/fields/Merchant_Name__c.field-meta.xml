@@ -6,7 +6,7 @@
     <inlineHelpText>The name of the merchant or vendor from whom the goods or services were purchased. This field is crucial for categorizing and auditing expenses.</inlineHelpText>
     <label>Merchant Name</label>
     <length>255</length>
-    <required>true</required>
+    <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Text</type>
