@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unit_Price__c</fullName>
+    <description>The price of a single unit of the item. This field is critical for calculating the total cost of the line item based on the quantity purchased.</description>
+    <inlineHelpText>The price of a single unit of the item. This field is critical for calculating the total cost of the line item based on the quantity purchased.</inlineHelpText>
+    <label>Unit Price</label>
+    <precision>18</precision>
+    <required>true</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

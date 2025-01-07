@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Description__c</fullName>
+    <description>Describes the item or service purchased. This field is used to provide more details about each expense incurred.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Describes the item or service purchased. This field is used to provide more details about each expense incurred.</inlineHelpText>
+    <label>Description</label>
+    <length>255</length>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
