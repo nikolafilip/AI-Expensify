@@ -110,7 +110,7 @@ public with sharing class DocumentAIService {
         }
     }
 
-    private static void processDocumentAIResponse(Id expenseId, String responseBody) {
+    public static void processDocumentAIResponse(Id expenseId, String responseBody) {
         if (String.isBlank(responseBody)) {
             throw new DocumentAIException('Response body is empty');
         }
@@ -218,7 +218,6 @@ public with sharing class DocumentAIService {
                             String description;
                             String quantity = '1'; // Default quantity
                             String totalAmount;
-                            Boolean quantityFromDescription = false;
                             
                             String fullMentionText = String.valueOf(entity.get('mentionText'));
                             
@@ -267,7 +266,6 @@ public with sharing class DocumentAIService {
                                                     if (m.find()) {
                                                         quantity = m.group(1);
                                                         description = m.group(2).trim();
-                                                        quantityFromDescription = true;
                                                     }
                                                 }
                                             }
@@ -281,20 +279,14 @@ public with sharing class DocumentAIService {
                                         if (m.find()) {
                                             quantity = m.group(1);
                                             description = m.group(2).trim();
-                                            quantityFromDescription = true;
                                         }
                                     }
                                     
                                     if (String.isNotBlank(totalAmount)) {
-                                        // Only divide the total amount by quantity if quantity was extracted from description
-                                        if (quantityFromDescription) {
-                                            Decimal qty = Decimal.valueOf(quantity);
-                                            Decimal total = Decimal.valueOf(totalAmount);
-                                            String unitPrice = String.valueOf(total / qty);
-                                            lineItem.put('unitPrice', unitPrice);
-                                        } else {
-                                            lineItem.put('unitPrice', totalAmount);
-                                        }
+                                        Decimal qty = Decimal.valueOf(quantity);
+                                        Decimal total = Decimal.valueOf(totalAmount);
+                                        String unitPrice = String.valueOf(total / qty);
+                                        lineItem.put('unitPrice', unitPrice);
                                     }
                                     if (String.isNotBlank(quantity)) {
                                         lineItem.put('quantity', quantity);
