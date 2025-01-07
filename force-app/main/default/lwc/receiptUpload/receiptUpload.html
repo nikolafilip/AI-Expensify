@@ -1,0 +1,65 @@
+<template>
+    <lightning-card title="Receipt Upload" icon-name="standard:expense_report">
+        <div class="slds-p-around_medium">
+            <!-- Upload Section -->
+            <div if:false={fileData} class="slds-text-align_center">
+                <div class="slds-p-around_medium slds-border_dashed slds-theme_shade upload-box">
+                    <lightning-file-upload
+                        label="Upload Receipt"
+                        name="receiptUploader"
+                        accept={acceptedFormats}
+                        record-id={recordId}
+                        onuploadfinished={handleUploadFinished}
+                        multiple="false"
+                    ></lightning-file-upload>
+                    <p class="slds-text-body_small slds-p-top_small">
+                        Supported formats: JPG, JPEG, PNG, PDF
+                    </p>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div if:true={fileData} class="slds-p-around_medium">
+                <div class="slds-grid slds-grid_align-center">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12 slds-large-size_6-of-12">
+                        <div class="preview-container slds-box slds-theme_default">
+                            <div class="slds-text-align_center">
+                                <img if:true={isImage} src={fileData.downloadUrl} 
+                                    class="preview-image" alt="Receipt preview"/>
+                                <div if:false={isImage} class="pdf-preview slds-align_absolute-center">
+                                    <lightning-icon icon-name="doctype:pdf" size="large"></lightning-icon>
+                                    <p class="slds-p-top_small">{fileData.fileName}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="slds-grid slds-grid_align-center slds-gutters slds-p-top_medium">
+                            <div class="slds-col">
+                                <lightning-button 
+                                    variant="destructive" 
+                                    label="Delete" 
+                                    onclick={handleDelete}
+                                    class="slds-m-right_x-small">
+                                </lightning-button>
+                            </div>
+                            <div class="slds-col">
+                                <lightning-button 
+                                    variant="brand" 
+                                    label="Submit" 
+                                    onclick={handleSubmit}
+                                    disabled={isProcessing}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div if:true={isProcessing} class="slds-is-relative slds-p-around_medium">
+                <lightning-spinner alternative-text="Processing" size="medium"></lightning-spinner>
+            </div>
+        </div>
+    </lightning-card>
+</template>
