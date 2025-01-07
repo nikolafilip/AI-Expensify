@@ -1,18 +1,26 @@
-# Salesforce DX Project: Next Steps
+# Salesforce Expense Tracking System
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+A modern expense management system built on Salesforce that uses Google's Document AI to automatically process receipts. Simply upload a receipt and the AI extracts merchant details, transaction date, line items, and totals to create a complete expense record. The native Salesforce platform enables powerful reporting and analytics through custom dashboards and reports to track spending patterns, monitor budgets, and streamline expense management workflows.
 
-## How Do You Plan to Deploy Your Changes?
+## Features
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+- Track expenses with key details including:
+  - Transaction date
+  - Merchant information
+  - Total amount
+  - Status tracking
+- Manage individual expense line items with:
+  - Item descriptions
+  - Quantities
+  - Unit prices
+  - Line amount calculations
 
-## Configure Your Salesforce DX Project
+## Contributing
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+1. Create a new branch for your feature
+2. Make your changes
+3. Submit a pull request
 
-## Read All About It
+## License
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+This is a free and open source project.
