@@ -1,0 +1,28 @@
+.receipt-container {
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    background: #f3f2f2;
+}
+
+.receipt-image {
+    display: block;
+    margin: 0 auto;
+}
+
+.receipt-pdf {
+    border: none;
+}
+
+.expense-tile {
+    cursor: pointer;
+}
+
+.expense-tile:hover {
+    background-color: #f3f2f2;
+}
+
+.slds-modal__content {
+    min-height: 300px;
+    max-height: 70vh;
+    overflow-y: auto;
+}

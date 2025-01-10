@@ -1,0 +1,235 @@
+<!-- Expense Review Component -->
+<template>
+    <!-- View Mode Toggle -->
+    <lightning-card title="Pending Expenses">
+        <div class="slds-m-around_medium">
+            <lightning-radio-group
+                name="viewMode"
+                label="View Mode"
+                options={viewModeOptions}
+                value={viewMode}
+                type="button"
+                onchange={handleViewModeChange}
+            ></lightning-radio-group>
+        </div>
+
+        <!-- Loading Spinner -->
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+
+        <!-- List View -->
+        <template if:true={expenses}>
+            <div class="slds-m-around_medium">
+                <template if:true={viewMode}>
+                    <!-- List View -->
+                    <template if:true={isListView}>
+                        <lightning-datatable
+                            key-field="Id"
+                            data={expenses}
+                            columns={listColumns}
+                            hide-checkbox-column
+                            onrowaction={handleExpenseClick}
+                        ></lightning-datatable>
+                    </template>
+
+                    <!-- Tile View -->
+                    <template if:false={isListView}>
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template for:each={expenses} for:item="expense">
+                                <div key={expense.Id} class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                                    <lightning-card>
+                                        <div class="slds-p-around_medium expense-tile" data-id={expense.Id} onclick={handleExpenseClick}>
+                                            <p class="slds-text-heading_small">{expense.Merchant_Name__c}</p>
+                                            <p>Date: <lightning-formatted-date-time value={expense.Transaction_Date__c}></lightning-formatted-date-time></p>
+                                            <p>Status: {expense.Status__c}</p>
+                                        </div>
+                                    </lightning-card>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </template>
+
+        <!-- No Records Message -->
+        <template if:true={noRecords}>
+            <div class="slds-text-align_center slds-m-around_medium">
+                No pending expenses found.
+            </div>
+        </template>
+
+        <!-- Expense Details Modal -->
+        <template if:true={showExpenseModal}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large">
+                <div class="slds-modal__container">
+                    <!-- Modal Header -->
+                    <header class="slds-modal__header">
+                        <h2 class="slds-text-heading_medium">
+                            Expense Details - {selectedExpense.Merchant_Name__c}
+                        </h2>
+                    </header>
+
+                    <!-- Modal Body -->
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <!-- Receipt Viewer Toggle -->
+                        <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                            <div class="slds-col">
+                                <lightning-button-icon
+                                    icon-name={receiptToggleIcon}
+                                    alternative-text={receiptToggleLabel}
+                                    title={receiptToggleLabel}
+                                    onclick={toggleReceiptView}
+                                    class="slds-m-right_x-small"
+                                ></lightning-button-icon>
+                                <span class="slds-p-left_x-small">{receiptToggleLabel}</span>
+                            </div>
+                        </div>
+
+                        <!-- Receipt Viewer -->
+                        <template if:true={showReceipt}>
+                            <div class="slds-m-bottom_medium receipt-container">
+                                <template if:true={hasReceiptImage}>
+                                    <img src={receiptUrl} alt="Receipt" class="receipt-image"/>
+                                </template>
+                                <template if:true={hasReceiptPDF}>
+                                    <iframe src={receiptUrl} class="receipt-pdf"></iframe>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Expense Information -->
+                        <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                            <div class="slds-col">
+                                <p><strong>Date:</strong> 
+                                    <lightning-formatted-date-time value={selectedExpense.Transaction_Date__c}>
+                                    </lightning-formatted-date-time>
+                                </p>
+                            </div>
+                            <div class="slds-col">
+                                <p><strong>Status:</strong> {selectedExpense.Status__c}</p>
+                            </div>
+                        </div>
+
+                        <!-- Line Items -->
+                        <template if:true={selectedExpenseDetails.lineItems}>
+                            <div class="slds-grid slds-gutters slds-m-bottom_small">
+                                <div class="slds-col">
+                                    <div class="slds-text-heading_small">Line Items</div>
+                                </div>
+                                <div class="slds-col slds-text-align_right">
+                                    <lightning-button 
+                                        label="Add Line Item" 
+                                        icon-name="utility:add"
+                                        onclick={handleAddLineItem}
+                                        variant="neutral"
+                                    ></lightning-button>
+                                </div>
+                            </div>
+                            <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={lineItems} for:item="item">
+                                        <tr key={item.Id}>
+                                            <td>
+                                                <lightning-input
+                                                    type="text"
+                                                    value={item.Description__c}
+                                                    data-id={item.Id}
+                                                    data-field="description"
+                                                    variant="label-hidden"
+                                                    onchange={handleLineItemChange}
+                                                ></lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    type="number"
+                                                    step="1"
+                                                    min="1"
+                                                    value={item.Quantity__c}
+                                                    data-id={item.Id}
+                                                    data-field="quantity"
+                                                    variant="label-hidden"
+                                                    onchange={handleLineItemChange}
+                                                    class="slds-p-horizontal_xx-small"
+                                                ></lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    value={item.Unit_Price__c}
+                                                    data-id={item.Id}
+                                                    data-field="unitPrice"
+                                                    variant="label-hidden"
+                                                    onchange={handleLineItemChange}
+                                                    formatter="currency"
+                                                    class="slds-p-horizontal_xx-small"
+                                                ></lightning-input>
+                                            </td>
+                                            <td>
+                                                <lightning-formatted-number 
+                                                    value={item.lineItemTotal} 
+                                                    format-style="currency" 
+                                                    currency-code="USD"
+                                                ></lightning-formatted-number>
+                                            </td>
+                                            <td>
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    alternative-text="Remove Line Item"
+                                                    title="Remove Line Item"
+                                                    data-id={item.Id}
+                                                    onclick={handleRemoveLineItem}
+                                                    variant="border-filled"
+                                                ></lightning-button-icon>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="slds-text-align_right"><strong>Total Amount:</strong></td>
+                                        <td>
+                                            <lightning-formatted-number 
+                                                value={totalAmount} 
+                                                format-style="currency" 
+                                                currency-code="USD"
+                                            ></lightning-formatted-number>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </template>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <footer class="slds-modal__footer">
+                        <lightning-button 
+                            label="Cancel" 
+                            onclick={handleCloseModal} 
+                            class="slds-m-right_x-small"
+                        ></lightning-button>
+                        <lightning-button 
+                            label="Approve" 
+                            variant="brand" 
+                            onclick={handleApproveExpense}
+                        ></lightning-button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </lightning-card>
+</template>

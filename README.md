@@ -4,6 +4,7 @@ A modern expense management system built on Salesforce that uses Google's Docume
 
 ## Features
 
+### Expense Creation
 - Track expenses with key details including:
   - Transaction date
   - Merchant information
@@ -14,6 +15,33 @@ A modern expense management system built on Salesforce that uses Google's Docume
   - Quantities
   - Unit prices
   - Line amount calculations
+
+### Expense Review
+- Flexible viewing options:
+  - List view for quick scanning
+  - Tile view for visual organization
+- Comprehensive review interface:
+  - View receipt images and PDFs
+  - Edit line item details
+  - Add new line items
+  - Remove existing line items
+- Approval workflow:
+  - Review pending expenses
+  - Modify line items before approval
+  - Bulk approve expenses
+  - Track approval status
+
+### Receipt Processing
+- Automated receipt processing using Google Document AI
+- Support for multiple file formats:
+  - JPEG/JPG images
+  - PNG images
+  - PDF documents
+- Automatic data extraction:
+  - Merchant details
+  - Transaction dates
+  - Line items
+  - Total amounts
 
 ## Contributing
 
