@@ -6,6 +6,7 @@ import updateLineItem from '@salesforce/apex/ExpenseReviewController.updateLineI
 import createLineItem from '@salesforce/apex/ExpenseReviewController.createLineItem';
 import deleteLineItem from '@salesforce/apex/ExpenseReviewController.deleteLineItem';
 import approveExpense from '@salesforce/apex/ExpenseReviewController.approveExpense';
+import rejectExpense from '@salesforce/apex/ExpenseReviewController.rejectExpense';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class ExpenseReview extends LightningElement {
@@ -134,7 +135,18 @@ export default class ExpenseReview extends LightningElement {
     handleLineItemChange(event) {
         const lineItemId = event.target.dataset.id;
         const field = event.target.dataset.field;
-        const value = field === 'description' ? event.target.value : Number(event.target.value);
+        let value = field === 'description' ? event.target.value : 
+                   field === 'unitPrice' ? Number(event.target.value) : 
+                   Number(event.target.value);
+        
+        // Allow negative numbers for unit price
+        if (field === 'unitPrice') {
+            // This is fine, we allow any number for unit price
+        } else if (field !== 'description' && value < 0) {
+            // Don't allow negative numbers for other numeric fields
+            this.showToast('Error', 'Only unit price can be negative for discounts', 'error');
+            return;
+        }
 
         if (lineItemId.startsWith('new-')) {
             const updatedItems = this.newLineItems.map(item => {
@@ -183,6 +195,7 @@ export default class ExpenseReview extends LightningElement {
             Description__c: '',
             Quantity__c: 1,
             Unit_Price__c: 0,
+            formattedUnitPrice: this.formatCurrency(0),
             isNew: true
         };
         
@@ -266,6 +279,25 @@ export default class ExpenseReview extends LightningElement {
         }
     }
 
+    async handleRejectExpense() {
+        if (!confirm('Are you sure you want to reject this expense?')) {
+            return;
+        }
+
+        this.isLoading = true;
+
+        try {
+            await rejectExpense({ expenseId: this.selectedExpense.Id });
+            this.showExpenseModal = false;
+            await refreshApex(this.wiredExpensesResult);
+            this.showToast('Success', 'Expense rejected successfully', 'success');
+        } catch (error) {
+            this.showToast('Error', error.body?.message || 'Failed to reject expense', 'error');
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
     handleCloseModal() {
         if (this.hasUnsavedChanges) {
             if (!confirm('You have unsaved changes. Are you sure you want to close?')) {
@@ -294,7 +326,8 @@ export default class ExpenseReview extends LightningElement {
         if (!this.selectedExpenseDetails?.lineItems) return [];
         return this.selectedExpenseDetails.lineItems.map(item => ({
             ...item,
-            lineItemTotal: item.Quantity__c * item.Unit_Price__c
+            lineItemTotal: item.Quantity__c * item.Unit_Price__c,
+            isDiscount: item.Unit_Price__c < 0
         }));
     }
 
@@ -303,6 +336,16 @@ export default class ExpenseReview extends LightningElement {
         return this.selectedExpenseDetails.lineItems.reduce(
             (total, item) => total + (item.Unit_Price__c * item.Quantity__c), 
             0
-        ).toFixed(2);
+        );
+    }
+
+    formatCurrency(value) {
+        if (value == null) return '';
+        const absValue = Math.abs(value);
+        const formatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(absValue);
+        return value < 0 ? `-${formatted}` : formatted;
     }
 }

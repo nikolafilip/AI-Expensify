@@ -153,6 +153,17 @@ public with sharing class ExpenseReviewController {
         delete lineItem;
     }
     
+    @AuraEnabled
+    public static void rejectExpense(Id expenseId) {
+        try {
+            Expense__c expense = [SELECT Id, Status__c FROM Expense__c WHERE Id = :expenseId];
+            expense.Status__c = 'Rejected';
+            update expense;
+        } catch (Exception e) {
+            throw new AuraHandledException('Failed to reject expense: ' + e.getMessage());
+        }
+    }
+    
     public class ExpenseWrapper {
         @AuraEnabled public Expense__c expense;
         @AuraEnabled public List<Expense_Line_Item__c> lineItems;

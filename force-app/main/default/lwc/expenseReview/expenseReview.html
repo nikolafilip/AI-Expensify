@@ -167,7 +167,6 @@
                                                 <lightning-input
                                                     type="number"
                                                     step="0.01"
-                                                    min="0"
                                                     value={item.Unit_Price__c}
                                                     data-id={item.Id}
                                                     data-field="unitPrice"
@@ -219,6 +218,12 @@
                         <lightning-button 
                             label="Cancel" 
                             onclick={handleCloseModal} 
+                            class="slds-m-right_x-small"
+                        ></lightning-button>
+                        <lightning-button 
+                            label="Reject"
+                            variant="destructive" 
+                            onclick={handleRejectExpense}
                             class="slds-m-right_x-small"
                         ></lightning-button>
                         <lightning-button 
